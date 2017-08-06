@@ -1,3 +1,4 @@
+flow.canvas = canvas;
 var canvas = {
     canvas: {
         //线上面点的队列

@@ -1,6 +1,6 @@
+flow.main = main;
+
 var main = {
-
-
     bind: function () {
         var that = this;
         $('.drag div').draggable({ helper: "clone" });
@@ -14,8 +14,6 @@ var main = {
                 var name = $(ui.draggable[0]).find('span').html();
                 //生成图框
                 that.makeFlow(type, x, y, name, name);
-
-
             }
         })
 
@@ -588,9 +586,9 @@ var main = {
             }
         })
     },
+    
+    
     //点击画布，消除path上面的点，消除属性框
-
-
     flowClick: function () {
         var that = this;
         $('svg').bind('click', function (e) {
