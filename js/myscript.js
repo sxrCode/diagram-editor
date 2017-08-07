@@ -1,21 +1,5 @@
 $(document).ready(function () {
     console.log("my script!");
-<<<<<<< Updated upstream
-    $('.dragaable').eq(2).draggable({
-        scroll: true,
-        revert: function(dropped) {
-            console.log('execute revert function!');
-            if (dropped) {
-                console.log('has dropped!');
-                return false;
-            }
-            console.log('has not dropped!');
-            return true;
-        }
-    });
-
-    $('#platte').droppable();
-=======
 
     $('.dragaable').eq(2).draggable({
         scroll: true,
@@ -48,5 +32,4 @@ $(document).ready(function () {
     $('.droppable').droppable({
 
     });
->>>>>>> Stashed changes
 });
