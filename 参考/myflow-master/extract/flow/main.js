@@ -7,7 +7,7 @@ var main = {
         $('.flow').droppable({
             drop: function (event, ui) {
                 // console.log(ui.draggable);
-                // q = ui.draggable;
+                // q = ui.draggable; 
                 var x = ui.position.left, y = ui.position.top;
 
                 var type = ui.draggable[0].className.split(' ')[0];
@@ -362,22 +362,6 @@ var main = {
 
 
 
-
-
-    // //
-    // ,checkL: function(num){
-    // 	var w;
-    // 	var q = that.getE(['circle','rect']);
-    // 	$.each(q, function(i,u){
-    // 		$.each(u.line,function(ei,eu){
-    // 			if(eu[1] == num ){
-    // 			// console.log([i,ei,eu]);
-    // 				w = [i,ei,eu];
-    // 			}
-    // 		})
-    // 	})
-    // 	return (w||[]);
-    // }
 
     //绑定焦点效果
     focusBind: function (el) {

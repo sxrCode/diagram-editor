@@ -32,3 +32,9 @@
     border: 1px solid blue;
     border-radius: 20px;
 }
+
+.dragaable:hover {
+    transition: border linear .1s, -webkit-box-shadow linear .2s;
+    border-color: rgba(41, 134, 238, .75);
+    box-shadow: 0 0 18px rgba(41, 134, 238, .75);
+}

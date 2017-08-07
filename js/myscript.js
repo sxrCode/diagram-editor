@@ -4,6 +4,8 @@ $(document).ready(function () {
     $('.dragaable').eq(2).draggable({
         scroll: true,
         cursor: "pointer",
+        //helper: 'clone',
+
         create: function () {
             console.log('draggable creation!');
         },
@@ -13,7 +15,11 @@ $(document).ready(function () {
         },
 
         start: function (event, ui) {
-            // console.log('drag start!');
+             console.log('drag start!');
+             if (ui) {
+                 $(ui.helper).css({'border-color': 'green'});
+             }
+            
         },
 
         stop: function (event, ui) {
@@ -30,6 +36,8 @@ $(document).ready(function () {
     });
 
     $('.droppable').droppable({
-
+        drop: function(event, ui) {
+            console.log('drop!!');
+        },
     });
 });
