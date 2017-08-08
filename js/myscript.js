@@ -10,7 +10,8 @@ function widgetFactory(type) {
 
 class EliipseWidget {
     constructor() {
-        this.widget = $('<div class="dragaable ellipse"></div>');
+        this.template = '<div class="dragaable ellipse"></div>';
+        this.widget = $(this.template);
     }
 
     createFigure() {
