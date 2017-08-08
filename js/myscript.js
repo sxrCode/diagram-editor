@@ -20,6 +20,7 @@ class EliipseWidget {
             cursor: 'pointer',
             start: this.onStartDrag,
             revert: this.onRevert,
+            helper: this.getRealDom,
         });
 
         return this.widget;
@@ -30,6 +31,10 @@ class EliipseWidget {
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
         }
+    }
+
+    getRealDom(event) {
+        return $('<div class="dragaable rectangle"></div>');
     }
 
     onRevert(dropped) {
