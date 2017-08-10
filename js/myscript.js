@@ -12,9 +12,11 @@ class EliipseWidget {
     constructor() {
         this.template = '<div class="dragaable ellipse"></div>';
         this.widget = $(this.template);
+        this.onDrop.bind(this);
     }
 
     createFigure() {
+        console.log('template: ' + this.template);
         $(this.widget).draggable({
             scroll: true,
             cursor: 'pointer',
@@ -22,8 +24,8 @@ class EliipseWidget {
             revert: this.onRevert,
             helper: this.getRealDom,
             drag: this.onDrag,
+            stop: this.onStop,
         });
-
         return this.widget;
     }
 
@@ -31,23 +33,43 @@ class EliipseWidget {
         console.log('drag start!');
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
+            /*$.extend(ui.helper, {
+                callback: this.onStop,
+            });*/
         }
+        //ui.helper.callback();
+    }
+
+    onDrop() {
+        console.log('callback onDrop!')
+        return true;
     }
 
     onDrag(event, ui) {
-         $("#dashboard").html("top: " + ui.position.top + "; left: " + ui.position.left);
+        $("#dashboard").html("top: " + ui.position.top + "; left: " + ui.position.left);
     }
 
     getRealDom(event) {
-        return $('<div class="dragaable rectangle"></div>');
+        this.draggableEle = $('<div class="dragaable rectangle"></div>');
+        return this.draggableEle;
     }
 
     onRevert(dropped) {
         let result = true;
+        console.log('onRevert!');
         if ($(dropped).hasClass('droppable')) {
+            console.log('hasClass(\'droppable\')');
             result = false;
+            this.droppedEle = dropped;
         }
         return result;
+    }
+
+    onStop(event, ui) {
+        console.log('onStop!');
+        if (this.droppedEle) {
+            console.log('ui.helper && this.droppedEle');
+        }
     }
 }
 
@@ -56,11 +78,16 @@ $(document).ready(function () {
     console.log("my script!");
     let ellipse = widgetFactory('ellipse');
     $('#left-closet').append(ellipse.createFigure());
-    
+
     $('.droppable').droppable({
         drop: function (event, ui) {
+            console.clear();
             console.log('drop!!');
+            if (ui.helper.callback()) {
+                console.log('callback!');
+            }
         },
+
     });
 });
 
