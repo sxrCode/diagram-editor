@@ -16,11 +16,11 @@ class EliipseWidget {
     }
 
     createFigure() {
-        console.log('template: ' + this.template);
+        
         $(this.widget).draggable({
             scroll: true,
             cursor: 'pointer',
-            start: this.onStartDrag,
+            start: this.onStartDrag.bind(this),
             revert: this.onRevert,
             helper: this.getRealDom,
             drag: this.onDrag,
@@ -31,6 +31,7 @@ class EliipseWidget {
 
     onStartDrag(event, ui) {
         console.log('drag start!');
+        console.log('template: ' + this.template);
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
             /*$.extend(ui.helper, {
