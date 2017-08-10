@@ -21,6 +21,7 @@ class EliipseWidget {
             start: this.onStartDrag,
             revert: this.onRevert,
             helper: this.getRealDom,
+            drag: this.onDrag,
         });
 
         return this.widget;
@@ -31,6 +32,10 @@ class EliipseWidget {
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
         }
+    }
+
+    onDrag(event, ui) {
+         $("#dashboard").html("top: " + ui.position.top + "; left: " + ui.position.left);
     }
 
     getRealDom(event) {
@@ -51,32 +56,7 @@ $(document).ready(function () {
     console.log("my script!");
     let ellipse = widgetFactory('ellipse');
     $('#left-closet').append(ellipse.createFigure());
-
-    /*
-    $('.dragaable').eq(2).draggable({
-        create: function () {
-            console.log('draggable creation!');
-        },
-
-        drag: function (event, ui) {
-            $("#dashboard").html("top: " + ui.position.top + "; left: " + ui.position.left);
-        },
-
-        start: function (event, ui) {
-             console.log('drag start!');
-             if (ui) {
-                 $(ui.helper).css({'border-color': 'green'});
-             }
-            
-        },
-
-        stop: function (event, ui) {
-            // console.log('drag stop!');
-        },
-        revert: function (dropped) {},
-    });
-    */
-
+    
     $('.droppable').droppable({
         drop: function (event, ui) {
             console.log('drop!!');
