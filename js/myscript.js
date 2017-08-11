@@ -1,3 +1,4 @@
+"use strict";
 function widgetFactory(type) {
     if (type === 'ellipse') {
         return new EliipseWidget();
@@ -16,7 +17,7 @@ class EliipseWidget {
     }
 
     createFigure() {
-        
+
         $(this.widget).draggable({
             scroll: true,
             cursor: 'pointer',
