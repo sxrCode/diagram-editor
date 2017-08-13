@@ -35,11 +35,10 @@ class EliipseWidget {
         console.log('template: ' + this.template);
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
-            /*$.extend(ui.helper, {
-                callback: this.onStop,
-            });*/
+            $.extend(ui.helper, {
+                callback: (function () { return this.onStop();}).bind(this),
+            });
         }
-        //ui.helper.callback();
     }
 
     onDrop() {
@@ -72,6 +71,7 @@ class EliipseWidget {
         if (this.droppedEle) {
             console.log('ui.helper && this.droppedEle');
         }
+        return true;
     }
 }
 
