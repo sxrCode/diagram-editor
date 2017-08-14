@@ -1,0 +1,41 @@
+.component-library {
+    border: 1px solid black;
+    width: 50px;
+    height: 350px;
+    float: left;
+}
+
+.component-platte {
+    border: 1px solid black;
+    width: 600px;
+    height: 350px;
+    margin-left: 20px;
+    float: left;
+}
+
+.rectangle {
+    width: 50px;
+    height: 50px;
+    border: 1px solid blue;
+}
+
+.circle {
+    width: 50px;
+    height: 50px;
+    border: 1px solid blue;
+    border-radius: 50px;
+}
+
+.ellipse {
+    width: 50px;
+    height: 50px;
+    border: 1px solid blue;
+    border-radius: 20px;
+}
+
+.draggable:hover {
+    cursor: pointer;
+    transition: border linear .1s, -webkit-box-shadow linear .2s;
+    border-color: rgba(41, 134, 238, .75);
+    box-shadow: 0 0 18px rgba(41, 134, 238, .75);
+}

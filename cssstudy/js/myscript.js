@@ -48,9 +48,9 @@ class EliipseWidget {
                 revert: this.onRevert,
             });
             $(widget).text('hello world!')
-                .click(function () {
-                    console.log($(this).text());
-                });
+            .click(function(){
+                console.log($(this).text());
+            });
             return true;
         }
         return result;
@@ -73,7 +73,7 @@ class EliipseWidget {
         return result;
     }
 
-    onStop(event, ui) {
+    onStop(event, ui) {     
         return true;
     }
 }
@@ -111,21 +111,6 @@ class platteWidget {
                 console.log('droppable deactivate!');
             },
 
-        }).selectable({
-            classes: {
-                "ui-selectable": "highlight"
-            },
-            selected: function (event, ui) {
-                console.log('selectable selected');
-                if (ui) {
-                    console.log($(ui.selected).text());
-                }
-            },
-            selecting: function (event, ui) {
-                if (ui) {
-                    console.log($(ui.selecting).text());
-                }
-            },
         });
 
         return this.widget;
