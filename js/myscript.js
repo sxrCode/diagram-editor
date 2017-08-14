@@ -31,8 +31,6 @@ class EliipseWidget {
     }
 
     onStartDrag(event, ui) {
-        console.log('drag start!');
-        console.log('template: ' + this.template);
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
             $.extend(ui.helper, {
@@ -57,9 +55,7 @@ class EliipseWidget {
 
     onRevert(dropped) {
         let result = true;
-        console.log('onRevert!');
         if ($(dropped).hasClass('droppable')) {
-            console.log('hasClass(\'droppable\')');
             result = false;
             this.droppedEle = dropped;
         }
@@ -67,7 +63,6 @@ class EliipseWidget {
     }
 
     onStop(event, ui) {
-        console.log('onStop!');
         if (this.droppedEle) {
             console.log('ui.helper && this.droppedEle');
         }
@@ -79,15 +74,12 @@ class EliipseWidget {
 $(document).ready(function () {
     console.log("my script!");
 
-
     $('.droppable').droppable({
         drop: function (event, ui) {
-            console.log('drop!!');
             if (ui.helper.callback()) {
                 if (event) {
-                    console.clear();
-                    console.log($(ui.helper).attr('class'));
-                    $(event.target).append($('<div class="dragaable rectangle"></div>'));
+                    let widget = $(ui.helper).clone();
+                    $(this).append(widget);
                 }
             }
         },
