@@ -11,7 +11,7 @@ function widgetFactory(type) {
 
 class EliipseWidget {
     constructor() {
-        this.template = '<div class="dragaable ellipse"></div>';
+        this.template = '<div class="draggable ellipse"></div>';
         this.widget = $(this.template);
         this.onDrop.bind(this);
     }
@@ -47,6 +47,10 @@ class EliipseWidget {
             $(widget).draggable({
                 cursor: 'pointer',
             });
+            $(widget).text('hello world!')
+            .click(function(){
+                console.log($(this).text());
+            });
             return true;
         }
         return result;
@@ -57,7 +61,7 @@ class EliipseWidget {
     }
 
     getRealDom(event) {
-        this.draggableEle = $('<div class="dragaable rectangle"></div>');
+        this.draggableEle = $('<div class="draggable rectangle"></div>');
         return this.draggableEle;
     }
 
@@ -65,15 +69,12 @@ class EliipseWidget {
         let result = true;
         if ($(dropped).hasClass('droppable')) {
             result = false;
-            this.droppedEle = dropped;
         }
         return result;
     }
 
     onStop(event, ui) {
-        if (this.droppedEle) {
-            console.log('ui.helper && this.droppedEle');
-        }
+        
         return true;
     }
 }
@@ -97,7 +98,7 @@ class platteWidget {
                 }
             },
 
-            accept: ".dragaable",
+            accept: ".draggable",
             activeClass: "ui-state-highlight",
 
             activate: function (event, ui) {
