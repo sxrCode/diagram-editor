@@ -78,18 +78,15 @@ class EliipseWidget {
 
 $(document).ready(function () {
     console.log("my script!");
-    let ellipse = widgetFactory('ellipse');
-    $('#left-closet').append(ellipse.createFigure());
+
 
     $('.droppable').droppable({
         drop: function (event, ui) {
-
             console.log('drop!!');
             if (ui.helper.callback()) {
                 if (event) {
                     console.clear();
                     console.log($(ui.helper).attr('class'));
-                    //ui.helper.appendTo(event.target);
                     $(event.target).append($('<div class="dragaable rectangle"></div>'));
                 }
             }
@@ -98,6 +95,21 @@ $(document).ready(function () {
         accept: ".dragaable",
         activeClass: "ui-state-highlight",
 
+        activate: function (event, ui) {
+            console.log('droppable activate!');
+        },
+
+        create: function (event, ui) {
+            console.log('droppable create!');
+        },
+
+        deactivate: function (event, ui) {
+            console.log('droppable deactivate!');
+        },
+
     });
+
+    let ellipse = widgetFactory('ellipse');
+    $('#left-closet').append(ellipse.createFigure());
 });
 
