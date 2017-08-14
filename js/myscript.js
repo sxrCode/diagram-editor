@@ -44,6 +44,9 @@ class EliipseWidget {
         if (ui) {
             let widget = $(ui.helper).clone();
             $(droppable).append(widget);
+            $(widget).draggable({
+                cursor: 'pointer',
+            });
             return true;
         }
         return result;
@@ -85,11 +88,12 @@ class platteWidget {
         this.widget = $(this.template).droppable({
             drop: function (event, ui) {
                 let that = this;
-                console.log('left: ' + ui.position.left);
-                if (ui.helper.callback(this, ui)) {
-                    console.log('callback success!');
-                } else {
-                    console.log('callback failure');
+                if (ui.helper.callback) {
+                    if (ui.helper.callback(this, ui)) {
+                        console.log('callback success!');
+                    } else {
+                        console.log('callback failure');
+                    }
                 }
             },
 
