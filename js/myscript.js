@@ -34,15 +34,19 @@ class EliipseWidget {
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
             $.extend(ui.helper, {
-                callback: (function () { return this.onDrop(); }).bind(this),
+                callback: (function (droppable, ui) { return this.onDrop(droppable, ui); }).bind(this),
             });
         }
     }
 
     onDrop(droppable, ui) {
-        let widget = $(ui.helper).clone();
-        $(droppable).append(widget);
-        return true;
+        let result = false;
+        if (ui) {
+            let widget = $(ui.helper).clone();
+            $(droppable).append(widget);
+            return true;
+        }
+        return result;
     }
 
     onDrag(event, ui) {
@@ -71,35 +75,54 @@ class EliipseWidget {
     }
 }
 
+class platteWidget {
+    constructor() {
+        this.template = " <div class=\"component-platte droppable\" id=\"platte\"></div>";
+
+    }
+
+    createFigure() {
+        this.widget = $(this.template).droppable({
+            drop: function (event, ui) {
+                let that = this;
+                console.log('left: ' + ui.position.left);
+                if (ui.helper.callback(this, ui)) {
+                    console.log('callback success!');
+                } else {
+                    console.log('callback failure');
+                }
+            },
+
+            accept: ".dragaable",
+            activeClass: "ui-state-highlight",
+
+            activate: function (event, ui) {
+                console.log('droppable activate!');
+            },
+
+            create: function (event, ui) {
+                console.log('droppable create!');
+            },
+
+            deactivate: function (event, ui) {
+                console.log('droppable deactivate!');
+            },
+
+        });
+
+        return this.widget;
+    }
+
+}
+
 
 $(document).ready(function () {
     console.log("my script!");
 
-    $('.droppable').droppable({
-        drop: function (event, ui) {
-            let that = this;
-            if (ui.helper.callback(this, ui)) {
-            }
-        },
-
-        accept: ".dragaable",
-        activeClass: "ui-state-highlight",
-
-        activate: function (event, ui) {
-            console.log('droppable activate!');
-        },
-
-        create: function (event, ui) {
-            console.log('droppable create!');
-        },
-
-        deactivate: function (event, ui) {
-            console.log('droppable deactivate!');
-        },
-
-    });
-
     let ellipse = widgetFactory('ellipse');
     $('#left-closet').append(ellipse.createFigure());
+
+    let platte = new platteWidget();
+    $('#media-space').append(platte.createFigure());
 });
 
