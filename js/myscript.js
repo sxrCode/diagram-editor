@@ -39,8 +39,9 @@ class EliipseWidget {
         }
     }
 
-    onDrop() {
-        console.log('callback onDrop!')
+    onDrop(droppable, ui) {
+        let widget = $(ui.helper).clone();
+        $(droppable).append(widget);
         return true;
     }
 
@@ -76,11 +77,8 @@ $(document).ready(function () {
 
     $('.droppable').droppable({
         drop: function (event, ui) {
-            if (ui.helper.callback()) {
-                if (event) {
-                    let widget = $(ui.helper).clone();
-                    $(this).append(widget);
-                }
+            let that = this;
+            if (ui.helper.callback(this, ui)) {
             }
         },
 
