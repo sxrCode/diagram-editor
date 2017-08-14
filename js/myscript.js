@@ -36,7 +36,7 @@ class EliipseWidget {
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
             $.extend(ui.helper, {
-                callback: (function () { return this.onStop();}).bind(this),
+                callback: (function () { return this.onDrop(); }).bind(this),
             });
         }
     }
@@ -83,12 +83,20 @@ $(document).ready(function () {
 
     $('.droppable').droppable({
         drop: function (event, ui) {
-            console.clear();
+
             console.log('drop!!');
             if (ui.helper.callback()) {
-                console.log('callback!');
+                if (event) {
+                    console.clear();
+                    console.log($(ui.helper).attr('class'));
+                    //ui.helper.appendTo(event.target);
+                    $(event.target).append($('<div class="dragaable rectangle"></div>'));
+                }
             }
         },
+
+        accept: ".dragaable",
+        activeClass: "ui-state-highlight",
 
     });
 });
