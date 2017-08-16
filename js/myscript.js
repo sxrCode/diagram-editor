@@ -14,6 +14,7 @@ class EliipseWidget {
         this.template = '<div class="draggable ellipse"></div>';
         this.widget = $(this.template);
         this.onDrop.bind(this);
+        this.widgetNumber = 1;
     }
 
     createFigure() {
@@ -22,7 +23,7 @@ class EliipseWidget {
             cursor: 'pointer',
             start: this.onStartDrag.bind(this),
             revert: this.onRevert,
-            helper: this.getRealDom,
+            helper: (function (event) { return this.getRealDom(event); }).bind(this),
             drag: this.onDrag,
             stop: this.onStop,
         });
@@ -33,7 +34,9 @@ class EliipseWidget {
         if (ui) {
             $(ui.helper).css({ 'border-color': 'red' });
             $.extend(ui.helper, {
-                onDrop: (function (droppable, ui) { return this.onDrop(droppable, ui); }).bind(this),
+                onDrop: (function (droppable, ui) {
+                    return this.onDrop(droppable, ui);
+                }).bind(this),
             });
         }
     }
@@ -47,10 +50,13 @@ class EliipseWidget {
                 cursor: 'pointer',
                 revert: this.onRevert,
             });
+            $(widget).text(this.widgetNumber++);
+            /*
             $(widget).text('hello world!')
                 .click(function () {
                     console.log($(this).text());
                 });
+            */
             return true;
         }
         return result;
@@ -116,14 +122,28 @@ class platteWidget {
                 "ui-selectable": "highlight"
             },
             selected: function (event, ui) {
-                console.log('selectable selected');
                 if (ui) {
-                    console.log($(ui.selected).text());
+                    console.log($(ui.selected).text() + ' was selected');
                 }
             },
             selecting: function (event, ui) {
                 if (ui) {
-                    console.log($(ui.selecting).text());
+                    console.log($(ui.selecting).text() + ' selecting');
+                }
+            },
+            unselected: function (event, ui) {
+                if (ui) {
+                    console.log($(ui.unselected).text() + ' was unselected');
+                }
+            },
+            unselecting: function (event, ui) {
+                if (ui) {
+                    console.log($(ui.unselecting).text() + ' unselecting');
+                }
+            },
+            stop: function (event, ui) {
+                if (ui) {
+                    console.log('stop!');
                 }
             },
         });
