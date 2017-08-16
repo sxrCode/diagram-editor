@@ -50,16 +50,20 @@ class EliipseWidget {
                 cursor: 'pointer',
                 revert: this.onRevert,
             });
-            
-            let that = this;
-            $(widget).text(this.widgetNumber++).on('onselecting', function (event) {
-                that.onselecting(event, this);
-                console.log($(this).text() + ' onselecting');
-            });
 
+            this.extendWidget(widget);
             return true;
         }
         return result;
+    }
+
+    extendWidget(widget) {
+        let that = this;
+        $(widget).text(this.widgetNumber++).on('onselecting', function (event) {
+            that.onselecting(event, this);
+        }).on('onUnselecting', function (event) {
+            that.onUnselecting(event, this);
+        });
     }
 
     onDrag(event, ui) {
@@ -84,7 +88,15 @@ class EliipseWidget {
     }
 
     onselecting(event, element) {
-        console.log('i has known one of ' + $(element).attr('class') + ' on selecting!');
+        $(element).css({
+            'box-shadow': '0 0 18px rgba(41, 134, 238, .75)',
+        });
+    }
+
+    onUnselecting(event, element) {
+        $(element).css({
+            'box-shadow': 'none',
+        });
     }
 }
 
@@ -144,6 +156,7 @@ class platteWidget {
             unselecting: function (event, ui) {
                 if (ui) {
                     console.log($(ui.unselecting).text() + ' unselecting');
+                    $(ui.unselecting).trigger('onUnselecting');
                 }
             },
             stop: function (event, ui) {
