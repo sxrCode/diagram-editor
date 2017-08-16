@@ -30,6 +30,8 @@ class EliipseDragWidget {
             that.onselecting(event, this);
         }).on('onUnselecting', function (event) {
             that.onUnselecting(event, this);
+        }).on('click', function (event) {
+            that.onselecting(event, this);
         });
     }
 
@@ -46,7 +48,7 @@ class EliipseDragWidget {
 
     onUnselecting(event, element) {
         $(element).css({
-            'box-shadow': 'none',
+            'box-shadow': '',
         });
     }
 
@@ -88,7 +90,7 @@ class EliipseWidget {
     onDrop(droppable, ui) {
         let result = false;
         if (ui) {
-            let dragPart = new EliipseDragWidget(ui.helper).setText(this.widgetNumber);
+            let dragPart = new EliipseDragWidget(ui.helper).setText(this.widgetNumber++);
             let widget = dragPart.getWidget();
             $(droppable).append(widget);
             return true;
