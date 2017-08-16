@@ -50,7 +50,9 @@ class EliipseWidget {
                 cursor: 'pointer',
                 revert: this.onRevert,
             });
-            $(widget).text(this.widgetNumber++);
+            $(widget).text(this.widgetNumber++).on('onselecting', function () {
+                console.log($(this).text() + ' onselecting');
+            });
             /*
             $(widget).text('hello world!')
                 .click(function () {
@@ -129,6 +131,7 @@ class platteWidget {
             selecting: function (event, ui) {
                 if (ui) {
                     console.log($(ui.selecting).text() + ' selecting');
+                    $(ui.selecting).trigger('onselecting');
                 }
             },
             unselected: function (event, ui) {
