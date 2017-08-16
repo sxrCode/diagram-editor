@@ -50,15 +50,13 @@ class EliipseWidget {
                 cursor: 'pointer',
                 revert: this.onRevert,
             });
-            $(widget).text(this.widgetNumber++).on('onselecting', function () {
+            
+            let that = this;
+            $(widget).text(this.widgetNumber++).on('onselecting', function (event) {
+                that.onselecting(event, this);
                 console.log($(this).text() + ' onselecting');
             });
-            /*
-            $(widget).text('hello world!')
-                .click(function () {
-                    console.log($(this).text());
-                });
-            */
+
             return true;
         }
         return result;
@@ -83,6 +81,10 @@ class EliipseWidget {
 
     onStop(event, ui) {
         return true;
+    }
+
+    onselecting(event, element) {
+        console.log('i has known one of ' + $(element).attr('class') + ' on selecting!');
     }
 }
 
@@ -131,7 +133,7 @@ class platteWidget {
             selecting: function (event, ui) {
                 if (ui) {
                     console.log($(ui.selecting).text() + ' selecting');
-                    $(ui.selecting).trigger('onselecting');
+                    $(ui.selecting).trigger('onselecting', [event]);
                 }
             },
             unselected: function (event, ui) {
