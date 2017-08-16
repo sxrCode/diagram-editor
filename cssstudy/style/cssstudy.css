@@ -1,0 +1,126 @@
+html {
+    font-family: sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.info-box {
+    width: 450px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.info-box ul {
+    padding-left: 0;
+    margin-top: 0;
+}
+
+.info-box li {
+    float: left;
+    list-style-type: none;
+    width: 150px;
+}
+
+.info-box li a {
+    display: inline-block;
+    text-decoration: none;
+    width: 100%;
+    line-height: 3;
+    background-color: red;
+    color: black;
+    text-align: center;
+}
+
+.info-box li a:focus,
+.info-box li a:hover {
+    background-color: #a60000;
+    color: white;
+}
+
+.info-box li a.active {
+    background-color: #a60000;
+    color: white;
+}
+
+.info-box .panels {
+    height: 352px;
+    position: relative;
+    clear: both;
+}
+
+.info-box article {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 352px;
+    padding: 10px;
+    color: white;
+    background-color: #a60000;
+}
+
+.info-box .active-panel {
+    z-index: 1;
+}
+
+.view_port {
+    background-color: black;
+    height: 25px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.polling_message {
+    color: white;
+    float: left;
+    margin-right: 2%;
+}
+
+.cylon_eye {
+    background-color: red;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, .1) 50%, rgba(0, 0, 0, .9) 75%);
+    color: white;
+    height: 100%;
+    width: 20%;
+    margin-left: 0%;
+    transition: margin-left 4s;
+    /* -webkit-animation: 4s linear 0s infinite alternate move_eye; */
+}
+
+.cylon_eye:hover {
+    margin-left: 100%;
+}
+
+@-webkit-keyframes move_eye {
+    from {
+        margin-left: -20%;
+    }
+    to {
+        margin-left: 100%;
+    }
+}
+
+@keyframes move_eye {
+    from {
+        margin-left: -20%;
+    }
+    to {
+        margin-left: 100%;
+    }
+}
+
+.transitiontest {
+    transition: width 2s;
+    width: 100px;
+    height: 100px;
+    background: red;
+}
+
+.transitiontest:hover {
+    width: 200px;
+}
