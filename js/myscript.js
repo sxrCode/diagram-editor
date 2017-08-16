@@ -9,11 +9,55 @@ function widgetFactory(type) {
     }
 }
 
+class EliipseDragWidget {
+    constructor(prototypeWidget) {
+        this.widget = $(prototypeWidget).clone();
+        this.init();
+    }
+
+    init() {
+        $(this.widget).draggable({
+            cursor: 'pointer',
+            revert: this.onRevert,
+        });
+        this.addEventHandler();
+        return this;
+    }
+
+    addEventHandler() {
+        let that = this;
+        $(this.widget).on('onselecting', function (event) {
+            that.onselecting(event, this);
+        }).on('onUnselecting', function (event) {
+            that.onUnselecting(event, this);
+        });
+    }
+
+    setText(text) {
+        $(this.widget).text(text);
+        return this;
+    }
+
+    onselecting(event, element) {
+        $(element).css({
+            'box-shadow': '0 0 18px rgba(41, 134, 238, .75)',
+        });
+    }
+
+    onUnselecting(event, element) {
+        $(element).css({
+            'box-shadow': 'none',
+        });
+    }
+
+    getWidget() {
+        return this.widget;
+    }
+}
 class EliipseWidget {
     constructor() {
         this.template = '<div class="draggable ellipse"></div>';
         this.widget = $(this.template);
-        this.onDrop.bind(this);
         this.widgetNumber = 1;
     }
 
@@ -44,26 +88,12 @@ class EliipseWidget {
     onDrop(droppable, ui) {
         let result = false;
         if (ui) {
-            let widget = $(ui.helper).clone();
+            let dragPart = new EliipseDragWidget(ui.helper).setText(this.widgetNumber);
+            let widget = dragPart.getWidget();
             $(droppable).append(widget);
-            $(widget).draggable({
-                cursor: 'pointer',
-                revert: this.onRevert,
-            });
-
-            this.extendWidget(widget);
             return true;
         }
         return result;
-    }
-
-    extendWidget(widget) {
-        let that = this;
-        $(widget).text(this.widgetNumber++).on('onselecting', function (event) {
-            that.onselecting(event, this);
-        }).on('onUnselecting', function (event) {
-            that.onUnselecting(event, this);
-        });
     }
 
     onDrag(event, ui) {
@@ -85,18 +115,6 @@ class EliipseWidget {
 
     onStop(event, ui) {
         return true;
-    }
-
-    onselecting(event, element) {
-        $(element).css({
-            'box-shadow': '0 0 18px rgba(41, 134, 238, .75)',
-        });
-    }
-
-    onUnselecting(event, element) {
-        $(element).css({
-            'box-shadow': 'none',
-        });
     }
 }
 
