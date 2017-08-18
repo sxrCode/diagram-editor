@@ -13,6 +13,10 @@ class EliipseDragWidget {
     constructor(prototypeWidget) {
         this.widget = $(prototypeWidget).clone();
         this.init();
+
+        this.attrTemplate = `
+            
+        `;
     }
 
     init() {
@@ -99,7 +103,6 @@ class EliipseWidget {
     }
 
     onDrag(event, ui) {
-        $("#dashboard").html("top: " + ui.position.top + "; left: " + ui.position.left);
     }
 
     getRealDom(event) {
