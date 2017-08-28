@@ -205,3 +205,9 @@ $(document).ready(function () {
     $('#media-space').append(platte.createFigure());
 });
 
+/******************************************/
+$(document).ready(function() {
+    let str = 'hello';
+    console.log(str || ' world!');
+});
+
