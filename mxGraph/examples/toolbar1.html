@@ -1,0 +1,125 @@
+<html>
+
+<head>
+    <title>Toolbar example for mxGraph</title>
+    <script type="text/javascript">
+        mxBasePath = '../src';
+    </script>
+
+    <!-- Loads and initializes the library -->
+    <script type="text/javascript" src="../src/js/mxClient.js"></script>
+
+    <script type="text/javascript">
+        function main() {
+
+            if (mxClient.isBrowserSupported()) {
+                var container = createAbsoluteDiv(document.body);
+                container.style.left = '24px';
+                container.style.right = '0px';
+                container.style.top = '26px';
+                container.style.bottom = '0px';
+                container.style.backgroundImage = 'url(./editors/images/grid.gif)';
+                mxEvent.disableContextMenu(container);
+
+                var tbcontainer = createAbsoluteDiv(document.body);
+                tbcontainer.style.left = '0px';
+                tbcontainer.style.width = '24px';
+                tbcontainer.style.top = '26px';
+                tbcontainer.style.bottom = '0px';
+
+                var graph = new mxGraph(container);
+
+                graph.dropEnabled = true;
+                graph.setConnectable(true);
+                graph.setMultigraph(false);
+                graph.setHtmlLabels(true);
+                graph.setTooltips(true);
+                var rubberband = new mxRubberband(graph);
+
+                var toolbox = new mxToolbar(tbcontainer);
+                toolbox.enabled = false;
+                addToolbarItem('editors/images/swimlane.gif', toolbox, graph, 'shape=swimlane');
+                addToolbarItem('editors/images/actor.gif', toolbox, graph, 'shape=ellipse;indicatorShape=actor;verticalLabelPosition=bottom;indicatorWidth=28;indicatorColor=blue;');
+
+                mxConnectionHandler.prototype.connectImage = new mxImage('images/connector.gif', 16, 16);
+                graph.isCellEditable = function(cell) {
+                    var cellstate = graph.view.getState(cell);
+                    if (cellstate != null) {
+                        if (cellstate.style == null || cellstate.style[mxConstants.STYLE_SHAPE] == 'ellipse') {
+                            return false;
+                        }
+                    }
+                    return mxGraph.prototype.isCellEditable.apply(graph, cell);
+
+                };
+
+                var popupMenuHandler = graph.createPopupMenuHandler();
+                popupMenuHandler.factoryMethod = function(menu, cell, evt) {
+                    menu.addItem('Item 1', null, function() {
+                        alert('Item 1');
+                    });
+
+                    menu.addItem('Item 2', null, function() {
+                        alert('Item 2');
+                    });
+
+                    menu.addSeparator();
+
+                    var submenu1 = menu.addItem('Submenu 1', null, null);
+
+                    menu.addItem('Subitem 1', null, function() {
+                        alert('Subitem 1');
+                    }, submenu1);
+                    menu.addItem('Subitem 1', null, function() {
+                        alert('Subitem 2');
+                    }, submenu1);
+                };
+
+                document.body.appendChild(mxUtils.button('View XML', function(evt) {
+                    console.log('evt.x: ' + evt.x + '; evt.type: ' + evt.type);
+                    var codec = new mxCodec();
+                    var modelxml = codec.encode(graph.model);
+                    mxUtils.popup(mxUtils.getPrettyXml(modelxml), true);
+
+                }));
+            } else {
+                mxUtils.error('浏览器不支持！', 200, false);
+            }
+
+        }
+
+        function addToolbarItem(image, toolbox, graph, style) {
+            function funct(graph, evt, cell, x, y) {
+                var pt = graph.getPointForEvent(evt);
+                console.log('x: ' + x + '; y: ' + y + '; evt.x: ' + evt.x + '; evt.type: ' + evt.type +
+                    '; pt.x: ' + pt.x + '; pt.y: ' + pt.y);
+
+                var parent = graph.getDefaultParent();
+                var v1 = graph.insertVertex(parent, null, '<b>hello world<b>', x, y, 90, 55.62, style);
+                var overlay = new mxCellOverlay(new mxImage('images/connector.gif', 16, 16), 'overlay', mxConstants.ALIGN_LEFT);
+                graph.addCellOverlay(v1, overlay);
+                overlay.addListener(mxEvent.CLICK, function(sender, mxevt) {
+                    console.log('mxevt.name: ' + mxevt.name + '; properties: ' + mxevt.properties);
+                });
+            }
+
+            var img = toolbox.addMode('rectangle', image, function(evt, cell) {
+                console.log('item funct');
+            });
+            mxUtils.makeDraggable(img, graph, funct);
+        }
+
+        function createAbsoluteDiv(parentDom) {
+            var div = document.createElement('div');
+            div.style.position = 'absolute';
+            div.style.overflow = 'hidden';
+            parentDom.appendChild(div);
+            return div;
+        }
+    </script>
+</head>
+
+<body onload="main()">
+</body>
+
+</html>
