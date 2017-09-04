@@ -108,7 +108,7 @@
                         bounds.x -= graph.view.translate.x;
                         bounds.y -= graph.view.translate.y;
 
-                        console.log('bounds.x: ' + bounds.x + '; bounds.y: ' + bounds.y);
+                        console.log('bounds.x: ' + bounds.x + '; bounds.y: ' + bounds.y + '; bounds.width: ' + bounds.width + '; bounds.height: ' + bounds.height);
                         addCells(cells, bounds, 'cells.length');
                     } else {
                         mxUtils.error('请选择要设置为模板的那些组件！', 200, true);
@@ -118,69 +118,114 @@
 
                 function addCells(cells, bounds, evt, title) {
                     cells = graph.cloneCells(mxUtils.sortCells(graph.model.getTopmostCells(cells)));
-
                     // Translates cells to origin
                     for (var i = 0; i < cells.length; i++) {
                         var geo = graph.getCellGeometry(cells[i]);
 
                         if (geo != null) {
+
                             geo.translate(-bounds.x, -bounds.y);
                         }
                     }
-
                     rightSidebar.appendChild(createItem(cells, bounds.width, bounds.height, title || 'cus', true, false, false));
+                    var xml = mxUtils.getXml(encodeCells.apply(graph, [cells]));
+                    console.log('template xml: ' + xml);
+                    /*
+                    var entry = {
+                        xml: xml,
+                        w: bounds.width,
+                        h: bounds.height
+                    };
 
+                    if (title != null) {
+                        entry.title = title;
+                    }
+
+                    images.push(entry);
+                    saveLibrary(evt);
+
+                    if (dropTarget != null && dropTarget.parentNode != null && images.length > 0) {
+                        dropTarget.parentNode.removeChild(dropTarget);
+                        dropTarget = null;
+                    }
+                    */
                 }
 
                 function createItem(cells, title, showLabel, showTitle, width, height, allowCellsInserted) {
-                    var elt = document.createElement('a');
-                    elt.setAttribute('href', 'javascript:void(0);');
-                    elt.className = 'geItem';
+                    var elt = document.createElement('div');
+                    //elt.setAttribute('href', 'javascript:void(0);');
+                    //elt.className = 'geItem';
                     elt.style.overflow = 'hidden';
                     var border = (mxClient.IS_QUIRKS) ? 8 + 2 * ((document.documentMode >= 5) ? 0 : 1) : 2 * 2;
-                    elt.style.width = (10 + border) + 'px';
-                    elt.style.height = (10 + border) + 'px';
+                    elt.style.width = (70 + border) + 'px';
+                    elt.style.height = (70 + border) + 'px';
                     elt.style.padding = 1 + 'px';
-
-                    if (mxClient.IS_IE6) {
-                        elt.style.border = 'none';
-                    }
+                    elt.style.border = border + 'px dashed green';
 
                     // Blocks default click action
                     mxEvent.addListener(elt, 'click', function(evt) {
                         mxEvent.consume(evt);
                     });
 
-                    createThumb(cells, 10, 10, elt, title, showLabel, showTitle, width, height);
+                    new createThumb(cells, 60, 60, elt, title, showLabel, showTitle, width, height);
+                    var bounds = new mxRectangle(0, 0, width, height);
+
+                    if (cells.length > 1 || cells[0].vertex) {
+                        var ds = this.createDragSource(elt, this.createDropHandler(cells, true, allowCellsInserted,
+                            bounds), this.createDragPreview(width, height), cells, bounds);
+                        this.addClickHandler(elt, ds, cells);
+
+                        // Uses guides for vertices only if enabled in graph
+                        ds.isGuidesEnabled = mxUtils.bind(this, function() {
+                            return this.editorUi.editor.graph.graphHandler.guidesEnabled;
+                        });
+                    } else if (cells[0] != null && cells[0].edge) {
+                        var ds = this.createDragSource(elt, this.createDropHandler(cells, false, allowCellsInserted,
+                            bounds), this.createDragPreview(width, height), cells, bounds);
+                        this.addClickHandler(elt, ds, cells);
+                    }
+
+                    // Shows a tooltip with the rendered cell
+                    if (!mxClient.IS_IOS) {
+                        mxEvent.addGestureListeners(elt, null, mxUtils.bind(this, function(evt) {
+                            if (mxEvent.isMouseEvent(evt)) {
+                                this.showTooltip(elt, cells, bounds.width, bounds.height, title, showLabel);
+                            }
+                        }));
+                    }
+
 
                     return elt;
                 }
 
+
+
                 function createThumb(cells, width, height, parent, title, showLabel, showTitle, realWidth, realHeight) {
-                    graph.labelsVisible = (showLabel == null || showLabel);
+
+                    this.tempGraph.labelsVisible = (showLabel == null || showLabel);
                     var fo = mxClient.NO_FO;
-                    graph.view.scaleAndTranslate(1, 0, 0);
-                    graph.addCells(cells);
-                    var bounds = graph.getGraphBounds();
+                    this.tempGraph.view.scaleAndTranslate(1, 0, 0);
+                    this.tempGraph.addCells(cells);
+                    var bounds = this.tempGraph.getGraphBounds();
                     var s = Math.floor(Math.min((width - 2 * 10) / bounds.width,
                         (height - 2 * 10) / 10) * 100) / 100;
-                    graph.view.scaleAndTranslate(s, Math.floor((width - bounds.width * s) / 2 / s - bounds.x),
+                    this.tempGraph.view.scaleAndTranslate(s, Math.floor((width - bounds.width * s) / 2 / s - bounds.x),
                         Math.floor((height - bounds.height * s) / 2 / s - bounds.y));
 
                     var node = null;
 
                     // For supporting HTML labels in IE9 standards mode the container is cloned instead
-                    if (graph.dialect == mxConstants.DIALECT_SVG) {
+                    if (this.tempGraph.dialect == mxConstants.DIALECT_SVG) {
                         console.log('create svg!');
-                        node = graph.view.getCanvas().ownerSVGElement.cloneNode(true);
+                        node = this.tempGraph.view.getCanvas().ownerSVGElement.cloneNode(true);
                     }
                     // LATER: Check if deep clone can be used for quirks if container in DOM
                     else {
-                        node = graph.container.cloneNode(false);
-                        node.innerHTML = graph.container.innerHTML;
+                        node = this.tempGraph.container.cloneNode(false);
+                        node.innerHTML = this.tempGraph.container.innerHTML;
                     }
 
-                    graph.getModel().clear();
+                    this.tempGraph.getModel().clear();
                     mxClient.NO_FO = fo;
 
                     // Catch-all event handling
@@ -222,6 +267,135 @@
                     }
                     */
                     return bounds;
+                }
+
+                createThumb.prototype.tempGraph = createTemporaryGraph(graph.getStylesheet());
+
+                function createTemporaryGraph(stylesheet) {
+                    var graph = new mxGraph(document.createElement('div'), null, null, stylesheet);
+                    graph.resetViewOnRootChange = false;
+                    graph.setConnectable(false);
+                    graph.gridEnabled = false;
+                    graph.autoScroll = false;
+                    graph.setTooltips(false);
+                    graph.setEnabled(false);
+
+                    // Container must be in the DOM for correct HTML rendering
+                    graph.container.style.visibility = 'hidden';
+                    graph.container.style.position = 'absolute';
+                    graph.container.style.overflow = 'hidden';
+                    graph.container.style.height = '1px';
+                    graph.container.style.width = '1px';
+                    return graph;
+                }
+
+                function encodeCells(cells) {
+                    var clones = this.cloneCells(cells);
+
+                    // Creates a dictionary for fast lookups
+                    var dict = new mxDictionary();
+                    for (var i = 0; i < cells.length; i++) {
+                        dict.put(cells[i], true);
+                    }
+
+                    // Checks for orphaned relative children and makes absolute
+                    for (var i = 0; i < clones.length; i++) {
+                        var state = this.view.getState(cells[i]);
+
+                        if (state != null) {
+                            var geo = this.getCellGeometry(clones[i]);
+
+                            if (geo != null && geo.relative && !this.model.isEdge(cells[i]) &&
+                                !dict.get(this.model.getParent(cells[i]))) {
+                                geo.relative = false;
+                                geo.x = state.x / state.view.scale - state.view.translate.x;
+                                geo.y = state.y / state.view.scale - state.view.translate.y;
+                            }
+                        }
+                    }
+
+                    var codec = new mxCodec();
+                    var model = new mxGraphModel();
+                    var parent = model.getChildAt(model.getRoot(), 0);
+
+                    for (var i = 0; i < cells.length; i++) {
+                        model.add(parent, clones[i]);
+                    }
+
+                    return codec.encode(model);
+                }
+
+                function createDragSource(elt, dropHandler, preview, cells, bounds) {
+                    var freeSourceEdge = null;
+                    var firstVertex = null;
+                    var sidebar = this;
+
+                    for (var i = 0; i < cells.length; i++) {
+                        if (firstVertex == null && graph.model.isVertex(cells[i])) {
+                            firstVertex = i;
+                        } else if (freeSourceEdge == null && graph.model.isEdge(cells[i]) &&
+                            graph.model.getTerminal(cells[i], true) == null) {
+                            freeSourceEdge = i;
+                        }
+
+                        if (firstVertex != null && freeSourceEdge != null) {
+                            break;
+                        }
+                    }
+
+                    var dragSource = mxUtils.makeDraggable(elt, graph, mxUtils.bind(this, function(graph, evt, target, x, y) {
+                            if (this.updateThread != null) {
+                                window.clearTimeout(this.updateThread);
+                            }
+
+                            if (cells != null && currentStyleTarget != null && activeArrow == styleTarget) {
+                                var tmp = graph.isCellSelected(currentStyleTarget.cell) ? graph.getSelectionCells() : [currentStyleTarget.cell];
+                                var updatedCells = this.updateShapes((graph.model.isEdge(currentStyleTarget.cell)) ? cells[0] : cells[firstVertex], tmp);
+                                graph.setSelectionCells(updatedCells);
+                            } else if (cells != null && activeArrow != null && currentTargetState != null && activeArrow != styleTarget) {
+                                var index = (graph.model.isEdge(currentTargetState.cell) || freeSourceEdge == null) ? firstVertex : freeSourceEdge;
+                                graph.setSelectionCells(this.dropAndConnect(currentTargetState.cell, cells, direction, index));
+                            } else {
+                                dropHandler.apply(this, arguments);
+                            }
+                        }),
+                        preview, 0, 0, graph.autoscroll, true, true);
+
+                    graph.addListener(mxEvent.ESCAPE, function(sender, evt) {
+                        if (dragSource.isActive()) {
+                            dragSource.reset();
+                        }
+                    });
+
+                    // Overrides mouseDown to ignore popup triggers
+                    var mouseDown = dragSource.mouseDown;
+                    dragSource.mouseDown = function(evt) {
+                        if (!mxEvent.isPopupTrigger(evt) && !mxEvent.isMultiTouchEvent(evt)) {
+                            graph.stopEditing();
+                            mouseDown.apply(this, arguments);
+                        }
+                    };
+
+                    // Hides guides and preview if target is active
+                    var dsCreatePreviewElement = dragSource.createPreviewElement;
+                    // Stores initial size of preview element
+                    dragSource.createPreviewElement = function(graph) {
+                        var elt = dsCreatePreviewElement.apply(this, arguments);
+
+                        // Pass-through events required to tooltip on replace shape
+                        if (mxClient.IS_SVG) {
+                            elt.style.pointerEvents = 'none';
+                        }
+
+                        this.previewElementWidth = elt.style.width;
+                        this.previewElementHeight = elt.style.height;
+
+                        return elt;
+                    };
+
+                    return dragSource;
+
+                    //last line for createDragSource
                 }
 
             } else {
